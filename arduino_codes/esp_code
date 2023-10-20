@@ -1,0 +1,54 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <ArduinoJson.h>
+
+const char* ssid = "awcv_cam";
+const char* password = "awcv_cam";
+const String serverUrl = "http://192.168.180.89:5000/receive_message";
+
+
+
+void setup() {
+  Serial.begin(9600);
+  // WiFi.begin(ssid, password);
+  // while (WiFi.status() != WL_CONNECTED) {
+  //   Serial.println("Connecting to WiFi...");
+  // }
+}
+
+void loop() {
+  // if (WiFi.status() == WL_CONNECTED) {
+  //   HTTPClient http;
+
+  //   // Use a WiFiClient object to connect to the server
+  //   WiFiClient client;
+    
+  //   // Begin the HTTP request by specifying the WiFiClient and URL
+  //   http.begin(client, serverUrl);
+
+  //   http.addHeader("Content-Type", "application/json");
+
+    // Create a JSON object to send the message
+    
+    if(Serial.available()>0){
+      char buffer[20]="";
+      Serial.readBytesUntil('\n', buffer, 20);
+      const char* message = buffer;
+      Serial.println(message);
+      StaticJsonDocument<256> jsonDocument;
+      jsonDocument["message"] = message;
+      String jsonMessage;
+      serializeJson(jsonDocument, jsonMessage);
+
+      int httpResponseCode = http.POST(jsonMessage);
+
+      if (httpResponseCode > 0) {
+        String response = http.getString();
+        Serial.println(response);
+      } else {
+        Serial.println("Error on HTTP request");
+      }
+    // }
+    // http.end();
+  } // Adjust the delay to control how often data is sent
+}
