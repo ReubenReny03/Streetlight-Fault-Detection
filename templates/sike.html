@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- ... (other HTML head content) -->
+</head>
+<body>
+    <h2>Light 1</h2>
+    <div>
+        Wire Check : <span id="check_1-values"></span><br>
+        Bulb Check : <span id="check_2-values"></span><br>
+        Flicker Check (alfa stage) : <span id="check_3-values"></span><br>
+        Fuse Check (alfa stage) : <span id="check_4-values"></span><br>
+        Message : 
+    </div>
+    <div id="updated-values">
+        <!-- Display updated values here -->
+    </div>
+
+    <script>
+        function fetchUpdatedValues() {
+            fetch('/get_updated_values')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the values on the page
+                    const updatedValuesDiv = document.getElementById('updated-values');
+                    const check_1 = document.getElementById('check_1-values');
+                    const check_2 = document.getElementById('check_2-values');
+                    const check_3 = document.getElementById('check_3-values');
+                    const check_4 = document.getElementById('check_4-values');
+                    if (data.message == "The tube light is running good"){
+                        check_1.innerHTML="✅";
+                        check_2.innerHTML="✅";
+                        check_3.innerHTML="	β ";
+                        check_4.innerHTML="	β ";
+                    }
+                    else if (data.message == "The tube light has a issue"){
+                        check_1.innerHTML="✅";
+                        check_2.innerHTML="❌";
+                        check_3.innerHTML="	β ";
+                        check_4.innerHTML="	β ";
+                    }
+                    else if (data.message == "The sourse of light has a issue"){
+                        check_1.innerHTML="❌";
+                        check_2.innerHTML="❌";
+                        check_3.innerHTML="	β ";
+                        check_4.innerHTML="	β ";
+                    }
+                    
+                })
+                .catch(error => console.error('Error fetching updated values:', error));
+        }
+
+        // Call the function every 2 seconds
+        setInterval(fetchUpdatedValues, 2000);
+
+        // Initial fetch
+        fetchUpdatedValues();
+    </script>
+</body>
+</html>
